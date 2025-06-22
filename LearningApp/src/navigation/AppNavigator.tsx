@@ -12,7 +12,7 @@ import LoadingIndicator from '../components/LoadingIndicator';
 const Stack = createStackNavigator();
 
 const AppNavigator = () => {
-  const { signed, loading } = useAuth();
+  const { signed, role, loading } = useAuth();
 
   if (loading) {
     return <LoadingIndicator />;
@@ -22,13 +22,16 @@ const AppNavigator = () => {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {!signed ? (
         <Stack.Screen name="Auth" component={AuthNavigator} />
+      ) : role === 'instructor' ? (
+        <>
+          <Stack.Screen name="InstructorDashboard" component={InstructorDashboard} />
+          <Stack.Screen name="CreateCourse" component={CreateCourseScreen} />
+        </>
       ) : (
         <>
           <Stack.Screen name="Courses" component={CoursesScreen} />
           <Stack.Screen name="CourseDetail" component={CourseDetailScreen} />
           <Stack.Screen name="EnrolledCourses" component={EnrolledCoursesScreen} />
-          <Stack.Screen name="InstructorDashboard" component={InstructorDashboard} />
-          <Stack.Screen name="CreateCourse" component={CreateCourseScreen} />
         </>
       )}
     </Stack.Navigator>
