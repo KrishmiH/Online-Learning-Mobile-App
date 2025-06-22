@@ -1,9 +1,14 @@
 const axios = require('axios');
 const AppError = require('../utils/errorHandler');
 
+let requestCount = 0;
+
 exports.getCourseRecommendations = async (req, res, next) => {
   try {
+    requestCount++;
+    console.log(`API Request Count: ${requestCount}`);
     const { prompt } = req.body;
+    console.log('Using OpenAI API key:', process.env.CHATGPT_API_KEY ? 'Exists' : 'Missing');
 
     if (!prompt) {
       return next(new AppError('Please provide a prompt', 400));
@@ -45,6 +50,7 @@ exports.getCourseRecommendations = async (req, res, next) => {
       },
     });
   } catch (err) {
+    console.error('ChatGPT error:', err.response ? err.response.data : err.message);
     next(err);
   }
 };
