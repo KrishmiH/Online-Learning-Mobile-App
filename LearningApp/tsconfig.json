@@ -19,6 +19,8 @@
     "src/services/authService.js", 
     "src/services/courseService.js",
     "src/services/chatGPTService.js", 
-    "src/context/AuthContext.js",
+    "src/context/AuthContext.js", 
+    "src/navigation/AuthNavigator.js", 
+    "src/navigation/AppNavigator.js",
   ]
 }
