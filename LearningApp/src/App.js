@@ -1,0 +1,25 @@
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { StatusBar } from 'expo-status-bar';
+import { AuthProvider } from './context/AuthContext';
+import AppNavigator from './navigation/AppNavigator';
+import { StyleSheet, View } from 'react-native';
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <NavigationContainer>
+        <View style={styles.container}>
+          <StatusBar style="light" />
+          <AppNavigator />
+        </View>
+      </NavigationContainer>
+    </AuthProvider>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
