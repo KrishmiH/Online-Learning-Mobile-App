@@ -13,5 +13,11 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-, "src/App.tsx"  ]
+    , 
+    "src/App.js", 
+    "src/services/api.js", 
+    "src/services/authService.js", 
+    "src/services/courseService.js",
+    "src/services/chatGPTService.js",
+  ]
 }
