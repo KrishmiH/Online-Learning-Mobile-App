@@ -1,73 +1,42 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import { authService } from '../services/authService';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as authService from '../services/authService';
 
 const AuthContext = createContext();
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    checkAuthState();
+    const loadUser = async () => {
+      const storedUser = await AsyncStorage.getItem('user');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+      setLoading(false);
+    };
+    loadUser();
   }, []);
 
-  const checkAuthState = async () => {
-    try {
-      const token = await authService.getToken();
-      if (token) {
-        const userInfo = await authService.getCurrentUser();
-        setUser(userInfo);
-      }
-    } catch (error) {
-      console.error('Auth check failed:', error);
-    } finally {
-      setLoading(false);
-    }
+  const signIn = async (username, password) => {
+    const data = await authService.login(username, password);
+    const userData = data.user;
+    await AsyncStorage.setItem('user', JSON.stringify(userData));
+    await AsyncStorage.setItem('token', data.token);
+    setUser(userData);
   };
 
-  const login = async (username, password) => {
-    const result = await authService.login(username, password);
-    if (result.status === 'success') {
-      setUser(result.data.user);
-    }
-    return result;
-  };
-
-  const register = async (username, password, role) => {
-    const result = await authService.register(username, password, role);
-    if (result.status === 'success') {
-      setUser(result.data.user);
-    }
-    return result;
-  };
-
-  const logout = async () => {
-    await authService.logout();
+  const signOut = async () => {
+    await AsyncStorage.clear();
     setUser(null);
   };
 
-  const value = {
-    user,
-    login,
-    register,
-    logout,
-    loading,
-    isAuthenticated: !!user,
-    isStudent: user?.role === 'student',
-    isInstructor: user?.role === 'instructor',
-  };
-
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{ user, loading, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );
 };
+
+export const useAuth = () => useContext(AuthContext);
