@@ -28,7 +28,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signOut = async () => {
-    await AsyncStorage.clear();
+    await AsyncStorage.removeItem('user');
+    await AsyncStorage.removeItem('token');
     setUser(null);
   };
 
