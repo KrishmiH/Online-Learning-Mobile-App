@@ -14,13 +14,13 @@
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
     , 
-    "src/App.js", 
+    "App.js", 
     "src/services/api.js", 
     "src/services/authService.js", 
     "src/services/courseService.js",
     "src/services/chatGPTService.js", 
     "src/context/AuthContext.js", 
     "src/navigation/AuthNavigator.js", 
-    "src/navigation/AppNavigator.js",
+    "src/navigation/AppNavigator.js", "app/index.js",
   ]
 }
