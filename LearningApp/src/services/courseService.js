@@ -30,6 +30,24 @@ export const createCourse = async (data) => {
   return res.data.data.course;
 };
 
+// Update course by ID
+export const updateCourse = async (id, data) => {
+  const res = await api.patch(`/courses/${id}`, data);
+  return res.data.data.course;
+};
+
+// Delete course by ID
+export const deleteCourse = async (id) => {
+  const res = await api.delete(`/courses/${id}`);
+  return res.data;
+};
+
+// Get course with enrolled students
+export const getCourseWithStudents = async (id) => {
+  const res = await api.get(`/courses/${id}/students`);
+  return res.data.data.course;
+};
+
 // Instructor: get courses they created
 export const getInstructorCourses = async () => {
   const res = await api.get('/courses/me/created');

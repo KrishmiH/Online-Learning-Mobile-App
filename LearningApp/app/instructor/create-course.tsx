@@ -1,10 +1,18 @@
 import React from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import api from '../../src/services/api';
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 
-// ✅ Define the shape of your form
 type CreateCourseFormData = {
   title: string;
   description: string;
@@ -12,14 +20,14 @@ type CreateCourseFormData = {
 };
 
 export default function CreateCourseScreen() {
-  // ✅ Pass the type to useForm
+  const router = useRouter();
   const { control, handleSubmit, reset } = useForm<CreateCourseFormData>();
 
   const onSubmit = async (data: CreateCourseFormData) => {
     try {
       await api.post('/courses', data);
       alert('Course created successfully!');
-      reset(); // Clear the form
+      reset();
       router.push('/instructor/my-courses');
     } catch (err) {
       console.error(err);
@@ -28,12 +36,25 @@ export default function CreateCourseScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      style={styles.container}
+    >
+      {/* Back Button */}
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => router.back()}
+      >
+        <Ionicons name="arrow-back" size={24} color="#3B82F6" />
+        <Text style={styles.backText}></Text>
+      </TouchableOpacity>
+
       <Text style={styles.heading}>Create New Course</Text>
 
       <Controller
         control={control}
         name="title"
+        rules={{ required: true }}
         render={({ field: { onChange, value } }) => (
           <TextInput
             placeholder="Course Title"
@@ -47,6 +68,7 @@ export default function CreateCourseScreen() {
       <Controller
         control={control}
         name="description"
+        rules={{ required: true }}
         render={({ field: { onChange, value } }) => (
           <TextInput
             placeholder="Short Description"
@@ -60,30 +82,83 @@ export default function CreateCourseScreen() {
       <Controller
         control={control}
         name="content"
+        rules={{ required: true }}
         render={({ field: { onChange, value } }) => (
           <TextInput
             placeholder="Detailed Content"
             value={value}
             onChangeText={onChange}
-            style={[styles.input, { height: 100 }]}
+            style={[styles.input, styles.textArea]}
             multiline
           />
         )}
       />
 
-      <Button title="Create Course" onPress={handleSubmit(onSubmit)} />
-    </View>
+      <TouchableOpacity
+        style={styles.submitButton}
+        onPress={handleSubmit(onSubmit)}
+      >
+        <Text style={styles.submitButtonText}>Create Course</Text>
+      </TouchableOpacity>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 24 },
-  heading: { fontSize: 22, fontWeight: 'bold', marginBottom: 20 },
+  container: {
+    flex: 1,
+    backgroundColor: '#F9FAFB',
+    paddingHorizontal: 20,
+    paddingTop: 40,
+  },
+
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+
+  backText: {
+    color: '#3B82F6',
+    fontSize: 18,
+    marginLeft: 5,
+  },
+
+  heading: {
+    fontSize: 24,
+    fontWeight: '700',
+    marginBottom: 25,
+    color: '#111827',
+    textAlign: 'center',
+  },
+
   input: {
-    borderWidth: 1,
-    padding: 10,
-    marginBottom: 16,
-    borderRadius: 6,
     backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    fontSize: 16,
+  },
+
+  textArea: {
+    height: 100,
+    textAlignVertical: 'top',
+  },
+
+  submitButton: {
+    backgroundColor: '#3B82F6',
+    paddingVertical: 14,
+    borderRadius: 30,
+    alignItems: 'center',
+    marginTop: 10,
+    elevation: 3,
+  },
+
+  submitButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
   },
 });

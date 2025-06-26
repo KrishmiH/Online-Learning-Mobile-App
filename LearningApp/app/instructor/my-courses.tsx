@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import api from '../../src/services/api';
 import { useRouter } from 'expo-router';
+import myCoursesStyles from '../../src/styles/myCoursesStyles';
 
-// ✅ Step 1: Define the Course type
 type Course = {
   _id: string;
   title: string;
@@ -11,41 +11,49 @@ type Course = {
 };
 
 export default function MyCourses() {
-  // ✅ Step 2: Tell TypeScript this is an array of Course
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    api.get('/courses/me/created')
+    api
+      .get('/courses/me/created')
       .then((res) => setCourses(res.data.data.courses))
-      .catch(console.error)
+      .catch(() => alert('Failed to fetch your courses'))
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <ActivityIndicator style={{ marginTop: 100 }} size="large" />;
+  const renderCourse = ({ item }: { item: Course }) => (
+    <TouchableOpacity
+      style={myCoursesStyles.courseCard}
+      onPress={() => router.push(`/instructor/students/${item._id}`)}
+    >
+      <Text style={myCoursesStyles.courseTitle}>{item.title}</Text>
+      <Text style={myCoursesStyles.courseDescription}>{item.description}</Text>
+    </TouchableOpacity>
+  );
+
+  if (loading) {
+    return <ActivityIndicator style={myCoursesStyles.loading} size="large" color="#3B82F6" />;
+  }
+
+  if (courses.length === 0) {
+    return (
+      <View style={myCoursesStyles.emptyContainer}>
+        <Text style={myCoursesStyles.emptyText}>You haven't created any courses yet.</Text>
+      </View>
+    );
+  }
 
   return (
-    <FlatList
-      data={courses}
-      keyExtractor={(item) => item._id}
-      contentContainerStyle={{ padding: 16 }}
-      renderItem={({ item }) => (
-        <TouchableOpacity
-          style={{
-            backgroundColor: '#fff',
-            marginBottom: 12,
-            padding: 16,
-            borderRadius: 10,
-            elevation: 2,
-          }}
-          // Correct way to navigate with dynamic route parameter
-          onPress={() => router.push(`/instructor/students/[id]`)}
-        >
-          <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{item.title}</Text>
-          <Text>{item.description}</Text>
-        </TouchableOpacity>
-      )}
-    />
+    <View style={myCoursesStyles.container}>
+      <Text style={myCoursesStyles.heading}>My Created Courses</Text>
+      <FlatList
+        data={courses}
+        keyExtractor={(item) => item._id}
+        renderItem={renderCourse}
+        contentContainerStyle={myCoursesStyles.listContent}
+      />
+    </View>
   );
 }
