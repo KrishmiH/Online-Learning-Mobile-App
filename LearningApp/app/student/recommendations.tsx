@@ -1,50 +1,112 @@
-import { useState } from 'react';
-import { View, Text, TextInput, Button, FlatList, ActivityIndicator } from 'react-native';
-import api from '../../src/services/api';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  ActivityIndicator,
+} from 'react-native';
+import recommendationsStyles from '../../src/styles/recommendationsStyles';
+import { MaterialIcons } from '@expo/vector-icons';
+import { getCourseRecommendations } from '../../src/services/chatGPTService';
 
-type Recommendation = {
-  title: string;
-  description: string;
+type Message = {
+  id: string;
+  text: string;
+  sender: 'user' | 'bot';
 };
 
-export default function ChatGPTScreen() {
-  const [prompt, setPrompt] = useState('');
-  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
+export default function Recommendations() {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const fetchRecommendations = async () => {
+  const sendMessage = async () => {
+    if (!input.trim()) return;
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      text: input.trim(),
+      sender: 'user',
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+    setInput('');
     setLoading(true);
+
     try {
-      const res = await api.post('/chatgpt/recommendations', { prompt });
-      setRecommendations(res.data.data.recommendations);
-    } catch (e) {
-      alert('Something went wrong!');
+      const recommendations = await getCourseRecommendations(userMessage.text);
+      const botMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: recommendations.join('\n\n'),
+        sender: 'bot',
+      };
+      setMessages((prev) => [...prev, botMessage]);
+    } catch (error) {
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: 'Sorry, something went wrong. Please try again.',
+        sender: 'bot',
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
+  };
+
+  const renderItem = ({ item }: { item: Message }) => {
+    const isUser = item.sender === 'user';
+    return (
+      <View
+        style={[
+          recommendationsStyles.messageContainer,
+          isUser ? recommendationsStyles.userMessage : recommendationsStyles.botMessage,
+        ]}
+      >
+        <Text style={isUser ? recommendationsStyles.userText : recommendationsStyles.botText}>
+          {item.text}
+        </Text>
+      </View>
+    );
   };
 
   return (
-    <View style={{ padding: 16 }}>
-      <Text style={{ fontSize: 20, marginBottom: 10 }}>Enter your career goals or interests:</Text>
-      <TextInput
-        value={prompt}
-        onChangeText={setPrompt}
-        placeholder="e.g., I want to become a mobile app developer"
-        style={{ borderWidth: 1, marginBottom: 10, padding: 8 }}
-      />
-      <Button title="Get Recommendations" onPress={fetchRecommendations} />
-
-      {loading && <ActivityIndicator style={{ marginTop: 20 }} size="large" />}
+    <KeyboardAvoidingView
+      style={recommendationsStyles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={90}
+    >
       <FlatList
-        data={recommendations}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View style={{ padding: 16, backgroundColor: '#fff', marginVertical: 8 }}>
-            <Text style={{ fontWeight: 'bold' }}>{item.title}</Text>
-            <Text>{item.description}</Text>
-          </View>
-        )}
+        data={messages}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={recommendationsStyles.chatContainer}
+        inverted
       />
-    </View>
+
+      <View style={recommendationsStyles.inputContainer}>
+        <TextInput
+          placeholder="Ask for course recommendations..."
+          value={input}
+          onChangeText={setInput}
+          style={recommendationsStyles.input}
+          multiline
+        />
+        <TouchableOpacity
+          style={recommendationsStyles.sendButton}
+          onPress={sendMessage}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <MaterialIcons name="send" size={24} color="white" />
+          )}
+        </TouchableOpacity>
+      </View>
+    </KeyboardAvoidingView>
   );
 }

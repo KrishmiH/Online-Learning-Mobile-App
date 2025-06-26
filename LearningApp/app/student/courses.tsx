@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import React from 'react';
 import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
-import api from '../../src/services/api';
 import { useRouter } from 'expo-router';
+import studentStyles from '../../src/styles/studentStyles';
 
 type Course = {
   _id: string;
@@ -12,44 +12,38 @@ type Course = {
   };
 };
 
-export default function CoursesScreen() {
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [loading, setLoading] = useState(true);
+type Props = {
+  courses: Course[];
+  loading: boolean;
+};
+
+export default function CoursesScreen({ courses, loading }: Props) {
   const router = useRouter();
 
-  useEffect(() => {
-    api
-      .get('/courses')
-      .then((res) => setCourses(res.data.data.courses))
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
-
-  if (loading) return <ActivityIndicator style={{ marginTop: 100 }} size="large" />;
+  if (loading) return <ActivityIndicator style={{ marginTop: 100 }} size="large" color="#3B82F6" />;
 
   return (
     <FlatList
       data={courses}
       keyExtractor={(item) => item._id}
-      contentContainerStyle={{ padding: 16 }}
+      contentContainerStyle={studentStyles.courseListContainer}
       renderItem={({ item }) => (
         <TouchableOpacity
-          style={{
-            backgroundColor: 'white',
-            marginBottom: 12,
-            padding: 16,
-            borderRadius: 10,
-            elevation: 2,
-          }}
+          style={studentStyles.courseCard}
           onPress={() => router.push(`/student/courses/${item._id}`)}
         >
-          <Text style={{ fontSize: 18, fontWeight: '600' }}>{item.title}</Text>
-          <Text>{item.description}</Text>
-          <Text style={{ color: 'gray', marginTop: 4 }}>
+          <Text style={studentStyles.courseTitle}>{item.title}</Text>
+          <Text style={studentStyles.courseDescription}>{item.description}</Text>
+          <Text style={studentStyles.courseInstructor}>
             Instructor: {item.instructor?.username ?? 'Unknown'}
           </Text>
         </TouchableOpacity>
       )}
+      ListEmptyComponent={
+        <Text style={{ textAlign: 'center', marginTop: 20, color: '#555' }}>
+          No courses available.
+        </Text>
+      }
     />
   );
 }
