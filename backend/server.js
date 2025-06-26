@@ -27,7 +27,10 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Enable CORS
-app.use(cors());
+app.use(cors({
+  origin: '*', // or specific mobile IPs for dev like 'http://192.168.x.x:19006'
+  credentials: true,
+}));
 
 // Mount routers
 app.use('/api/v1/auth', authRoutes);
