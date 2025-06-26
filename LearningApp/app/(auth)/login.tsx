@@ -1,8 +1,10 @@
 import React from 'react';
-import { View, Text, TextInput, Button } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { useAuth } from '../../src/context/AuthContext';
 import { router } from 'expo-router';
+import authStyles from '../../src/styles/authStyles';
+import { Ionicons } from '@expo/vector-icons';
 
 type LoginFormData = {
   username: string;
@@ -23,8 +25,12 @@ export default function Login() {
   };
 
   return (
-    <View style={{ padding: 24 }}>
-      <Text style={{ fontSize: 24, marginBottom: 16 }}>Login</Text>
+    <View style={authStyles.container}>
+      <TouchableOpacity onPress={() => router.back()} style={authStyles.backButton}>
+        <Ionicons name="arrow-back" size={24} color="#374151" />
+      </TouchableOpacity>
+
+      <Text style={authStyles.heading}>Login</Text>
 
       <Controller
         control={control}
@@ -34,7 +40,7 @@ export default function Login() {
             placeholder="Username"
             value={value}
             onChangeText={onChange}
-            style={{ borderWidth: 1, padding: 8, marginBottom: 16 }}
+            style={authStyles.input}
           />
         )}
       />
@@ -47,16 +53,18 @@ export default function Login() {
             secureTextEntry
             value={value}
             onChangeText={onChange}
-            style={{ borderWidth: 1, padding: 8, marginBottom: 16 }}
+            style={authStyles.input}
           />
         )}
       />
 
-      <Button title="Login" onPress={handleSubmit(onSubmit)} />
+      <TouchableOpacity style={authStyles.button} onPress={handleSubmit(onSubmit)}>
+        <Text style={authStyles.buttonText}>Login</Text>
+      </TouchableOpacity>
 
-      <Text style={{ marginTop: 16 }}>
+      <Text style={authStyles.linkText}>
         Don't have an account?{' '}
-        <Text style={{ color: '#3B82F6' }} onPress={() => router.push('/(auth)/register')}>
+        <Text style={authStyles.link} onPress={() => router.push('/(auth)/register')}>
           Register
         </Text>
       </Text>

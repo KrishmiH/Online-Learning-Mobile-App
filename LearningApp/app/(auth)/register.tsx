@@ -1,21 +1,24 @@
-import React from 'react';
-import { View, Text, TextInput, Button } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { router } from 'expo-router';
 import * as authService from '../../src/services/authService';
+import authStyles from '../../src/styles/authStyles';
+import { Ionicons } from '@expo/vector-icons';
 
-type LoginFormData = {
+type RegisterFormData = {
   username: string;
   password: string;
   role: string;
 };
 
 export default function Register() {
-  const { control, handleSubmit } = useForm<LoginFormData>();
+  const { control, handleSubmit, setValue } = useForm<RegisterFormData>();
+  const [selectedRole, setSelectedRole] = useState('student');
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async (data: RegisterFormData) => {
     try {
-      await authService.register(data.username, data.password, data.role);
+      await authService.register(data.username, data.password, selectedRole);
       alert('Registration successful. Please login.');
       router.replace('/(auth)/login');
     } catch (err) {
@@ -24,8 +27,12 @@ export default function Register() {
   };
 
   return (
-    <View style={{ padding: 24 }}>
-      <Text style={{ fontSize: 24, marginBottom: 16 }}>Register</Text>
+    <View style={authStyles.container}>
+      <TouchableOpacity onPress={() => router.back()} style={authStyles.backButton}>
+        <Ionicons name="arrow-back" size={24} color="#374151" />
+      </TouchableOpacity>
+
+      <Text style={authStyles.heading}>Register</Text>
 
       <Controller
         control={control}
@@ -35,7 +42,7 @@ export default function Register() {
             placeholder="Username"
             value={value}
             onChangeText={onChange}
-            style={{ borderWidth: 1, padding: 8, marginBottom: 16 }}
+            style={authStyles.input}
           />
         )}
       />
@@ -48,28 +55,34 @@ export default function Register() {
             secureTextEntry
             value={value}
             onChangeText={onChange}
-            style={{ borderWidth: 1, padding: 8, marginBottom: 16 }}
-          />
-        )}
-      />
-      <Controller
-        control={control}
-        name="role"
-        render={({ field: { onChange, value } }) => (
-          <TextInput
-            placeholder="Role (student / instructor)"
-            value={value}
-            onChangeText={onChange}
-            style={{ borderWidth: 1, padding: 8, marginBottom: 16 }}
+            style={authStyles.input}
           />
         )}
       />
 
-      <Button title="Register" onPress={handleSubmit(onSubmit)} />
+      <View style={authStyles.roleContainer}>
+        <TouchableOpacity
+          style={[authStyles.roleButton, selectedRole === 'student' && authStyles.roleButtonActive]}
+          onPress={() => setSelectedRole('student')}
+        >
+          <Text style={authStyles.roleText}>Student</Text>
+        </TouchableOpacity>
 
-      <Text style={{ marginTop: 16 }}>
+        <TouchableOpacity
+          style={[authStyles.roleButton, selectedRole === 'instructor' && authStyles.roleButtonActive]}
+          onPress={() => setSelectedRole('instructor')}
+        >
+          <Text style={authStyles.roleText}>Instructor</Text>
+        </TouchableOpacity>
+      </View>
+
+      <TouchableOpacity style={authStyles.button} onPress={handleSubmit(onSubmit)}>
+        <Text style={authStyles.buttonText}>Register</Text>
+      </TouchableOpacity>
+
+      <Text style={authStyles.linkText}>
         Already have an account?{' '}
-        <Text style={{ color: '#3B82F6' }} onPress={() => router.push('/login')}>
+        <Text style={authStyles.link} onPress={() => router.push('/(auth)/login')}>
           Login
         </Text>
       </Text>
