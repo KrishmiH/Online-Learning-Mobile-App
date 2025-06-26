@@ -1,43 +1,37 @@
 import api from './api';
 
-export const courseService = {
-  async getAllCourses() {
-    const response = await api.get('/courses');
-    return response.data;
-  },
+// Get all courses (for students)
+export const getAllCourses = async () => {
+  const res = await api.get('/courses');
+  return res.data.data.courses;
+};
 
-  async getCourse(id) {
-    const response = await api.get(`/courses/${id}`);
-    return response.data;
-  },
+// Get course by ID
+export const getCourseById = async (id) => {
+  const res = await api.get(`/courses/${id}`);
+  return res.data.data.course;
+};
 
-  async createCourse(courseData) {
-    const response = await api.post('/courses', courseData);
-    return response.data;
-  },
+// Enroll in a course
+export const enrollInCourse = async (id) => {
+  const res = await api.post(`/courses/${id}/enroll`);
+  return res.data.data.course;
+};
 
-  async updateCourse(id, courseData) {
-    const response = await api.patch(`/courses/${id}`, courseData);
-    return response.data;
-  },
+// Get enrolled courses for the current student
+export const getEnrolledCourses = async () => {
+  const res = await api.get('/courses/me/enrolled');
+  return res.data.data.courses;
+};
 
-  async deleteCourse(id) {
-    const response = await api.delete(`/courses/${id}`);
-    return response.data;
-  },
+// Instructor: create course
+export const createCourse = async (data) => {
+  const res = await api.post('/courses', data);
+  return res.data.data.course;
+};
 
-  async enrollInCourse(id) {
-    const response = await api.post(`/courses/${id}/enroll`);
-    return response.data;
-  },
-
-  async getEnrolledCourses() {
-    const response = await api.get('/courses/me/enrolled');
-    return response.data;
-  },
-
-  async getInstructorCourses() {
-    const response = await api.get('/courses/me/created');
-    return response.data;
-  },
+// Instructor: get courses they created
+export const getInstructorCourses = async () => {
+  const res = await api.get('/courses/me/created');
+  return res.data.data.courses;
 };

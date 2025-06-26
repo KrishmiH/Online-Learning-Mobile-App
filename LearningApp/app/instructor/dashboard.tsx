@@ -15,6 +15,10 @@ export default function InstructorDashboard() {
       <Text style={{ fontSize: 24, marginBottom: 16 }}>
         Welcome Instructor: {user?.username}
       </Text>
+
+      <Button title="Create Course" onPress={() => router.push('/instructor/create-course')} />
+      <Button title="My Courses" onPress={() => router.push('/instructor/my-courses')} />
+        
       <Button title="Sign Out" onPress={handleSignOut} />
     </View>
   );
