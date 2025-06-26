@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, Text, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import api from '../../../src/services/api';
 
@@ -33,17 +33,51 @@ export default function CourseStudents() {
   if (loading) return <ActivityIndicator style={{ marginTop: 100 }} size="large" />;
 
   return (
-    <View style={{ padding: 16 }}>
-      <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10 }}>Enrolled Students</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Enrolled Students</Text>
+
+      {/* Table Header */}
+      <View style={styles.tableHeader}>
+        <Text style={[styles.cell, styles.headerText]}>#</Text>
+        <Text style={[styles.cell, styles.headerText]}>Username</Text>
+      </View>
+
       <FlatList
         data={students}
         keyExtractor={(item) => item._id}
-        renderItem={({ item }) => (
-          <View style={{ padding: 12, backgroundColor: '#fff', marginBottom: 10, borderRadius: 8 }}>
-            <Text style={{ fontWeight: '600' }}>{item.username}</Text>
+        renderItem={({ item, index }) => (
+          <View style={styles.tableRow}>
+            <Text style={styles.cell}>{index + 1}</Text>
+            <Text style={styles.cell}>{item.username}</Text>
           </View>
         )}
       />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { padding: 16 },
+  title: { fontSize: 20, fontWeight: 'bold', marginBottom: 16 },
+  tableHeader: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    paddingBottom: 8,
+    marginBottom: 8,
+  },
+  tableRow: {
+    flexDirection: 'row',
+    paddingVertical: 8,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#eee',
+  },
+  cell: {
+    flex: 1,
+    fontSize: 16,
+  },
+  headerText: {
+    fontWeight: 'bold',
+    color: '#333',
+  },
+});

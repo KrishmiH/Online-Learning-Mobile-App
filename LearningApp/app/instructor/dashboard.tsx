@@ -18,6 +18,7 @@ export default function InstructorDashboard() {
 
       <Button title="Create Course" onPress={() => router.push('/instructor/create-course')} />
       <Button title="My Courses" onPress={() => router.push('/instructor/my-courses')} />
+      {/* <Button title="Enrolled Students" onPress={() => router.push('/instructor/my-courses')} /> */}
         
       <Button title="Sign Out" onPress={handleSignOut} />
     </View>
