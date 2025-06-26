@@ -15,7 +15,13 @@ export default function StudentHome() {
       <Text style={{ fontSize: 24, marginBottom: 16 }}>
         Welcome Student: {user?.username}
       </Text>
+
+      <Button title="Browse Courses" onPress={() => router.push('/student/courses')} />
+      <Button title="My Enrolled Courses" onPress={() => router.push('/student/enrolled')} />
+      <Button title="Get Course Recommendations" onPress={() => router.push('/student/recommendations')} />
+      
       <Button title="Sign Out" onPress={handleSignOut} />
+
     </View>
   );
 }
