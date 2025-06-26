@@ -8,6 +8,19 @@ export default StyleSheet.create({
     paddingTop: 24,
   },
 
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+
+  backText: {
+    color: '#3B82F6', // primary blue
+    fontWeight: '600',
+    fontSize: 18,
+    marginLeft: 6,
+  },
+
   heading: {
     fontSize: 24,
     fontWeight: '700',

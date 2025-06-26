@@ -5,11 +5,13 @@ import {
   FlatList,
   ActivityIndicator,
   TouchableOpacity,
+  Pressable,
 } from 'react-native';
 import { useAuth } from '../../src/context/AuthContext';
 import api from '../../src/services/api';
 import enrolledStyles from '../../src/styles/enrolledStyles';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';  // For arrow icon
 
 type Course = {
   _id: string;
@@ -56,17 +58,34 @@ export default function EnrolledCourses() {
   );
 
   if (loading)
-    return <ActivityIndicator style={enrolledStyles.loading} size="large" color="#3B82F6" />;
+    return (
+      <ActivityIndicator
+        style={enrolledStyles.loading}
+        size="large"
+        color="#3B82F6"
+      />
+    );
 
   if (courses.length === 0)
     return (
       <View style={enrolledStyles.emptyContainer}>
-        <Text style={enrolledStyles.emptyText}>You have not enrolled in any courses yet.</Text>
+        <Text style={enrolledStyles.emptyText}>
+          You have not enrolled in any courses yet.
+        </Text>
       </View>
     );
 
   return (
     <View style={enrolledStyles.container}>
+      {/* Back button */}
+      <Pressable
+        style={enrolledStyles.backButton}
+        onPress={() => router.back()}
+      >
+        <Ionicons name="arrow-back" size={24} color="#3B82F6" />
+        {/* <Text style={enrolledStyles.backText}>Back</Text> */}
+      </Pressable>
+
       <Text style={enrolledStyles.heading}>My Enrolled Courses</Text>
       <FlatList
         data={courses}

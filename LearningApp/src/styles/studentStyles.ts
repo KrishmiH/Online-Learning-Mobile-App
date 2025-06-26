@@ -95,7 +95,7 @@ export default StyleSheet.create({
     bottom: 0,
     width: sidebarWidth,
     backgroundColor: '#fff',
-    paddingTop: 50,
+    paddingTop: 30,
     paddingHorizontal: 20,
     shadowColor: '#000',
     shadowOpacity: 0.15,
