@@ -173,7 +173,7 @@ export default function StudentHome() {
             onPress={() => {
               setSidebarVisible(false);
               signOut();
-              router.replace('/(auth)/login');
+              router.replace('/');
             }}
           >
             <Ionicons name="log-out" size={22} color="#EF4444" />
