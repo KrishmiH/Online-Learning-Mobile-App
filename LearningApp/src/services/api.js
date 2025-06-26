@@ -6,15 +6,20 @@ const api = axios.create({
   baseURL: API_URL,
 });
 
-// Attach token from AsyncStorage before every request
-api.interceptors.request.use(async (config) => {
-  const token = await AsyncStorage.getItem('token'); // Make sure key matches AuthContext
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-}, (error) => {
-  return Promise.reject(error);
-});
+api.interceptors.request.use(
+  async (config) => {
+    const token = await AsyncStorage.getItem('token');
+
+    if (token && token !== 'undefined') {
+      config.headers.Authorization = `Bearer ${token}`;
+      console.log('📡 Sending token:', token);
+    } else {
+      console.warn('⚠️ No valid token found');
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 export default api;

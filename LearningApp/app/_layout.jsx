@@ -10,6 +10,7 @@ export default function RootLayout() {
         <Stack.Screen name="redirect" />
         <Stack.Screen name="student/home" />
         <Stack.Screen name="instructor/dashboard" />
+        <Stack.Screen name="/instructor/students/[id]" />
       </Stack>
     </AuthProvider>
   );
