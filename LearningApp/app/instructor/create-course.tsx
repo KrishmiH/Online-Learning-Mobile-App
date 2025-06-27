@@ -28,7 +28,7 @@ export default function CreateCourseScreen() {
       await api.post('/courses', data);
       alert('Course created successfully!');
       reset();
-      router.push('/instructor/my-courses');
+      router.push('/instructor/dashboard');
     } catch (err) {
       console.error(err);
       alert('Error creating course');
