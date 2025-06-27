@@ -10,8 +10,9 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import recommendationsStyles from '../../src/styles/recommendationsStyles';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { getCourseRecommendations } from '../../src/services/chatGPTService';
+import { useNavigation } from '@react-navigation/native';
 
 type Message = {
   id: string;
@@ -23,6 +24,8 @@ export default function Recommendations() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const navigation = useNavigation();
 
   const sendMessage = async () => {
     if (!input.trim()) return;
@@ -79,6 +82,15 @@ export default function Recommendations() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={90}
     >
+      {/* 🔙 Back Button Header */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', padding: 16 }}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="#3B82F6" />
+        </TouchableOpacity>
+        <Text style={{ marginLeft: 12, fontSize: 18, fontWeight: '600', color: '#111827' }}>
+        </Text>
+      </View>
+
       <FlatList
         data={messages}
         renderItem={renderItem}
