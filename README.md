@@ -163,6 +163,7 @@ Scan the QR code with the **Expo Go** app to run on your device.
 * **Backend**: Node.js, Express.js, MongoDB, JWT
 * **Deployment-ready**: Easily deployable with MongoDB Atlas and platforms like Render or Vercel.
 
+* **Demo Link**: https://1drv.ms/v/c/265c5aff5f4c1a2a/EVvjMUuol-JMrEBFT0OPokEB3HDp4OYGVrOBlGRpqUYH7g
 ---
 
 > Built with ❤️ by Krishmi Hansara
